@@ -2,6 +2,7 @@ import { generateCyrillic } from "../../utils/language";
 
 const en = {
   title: "3Nity",
+  home: "Home",
   about: "About",
   services: "Services",
   previousWork: "Previous work",
@@ -11,6 +12,7 @@ const en = {
 
 const lat = {
   title: "3Nity",
+  home: "Početna strana",
   about: "O nama",
   services: "Usluge",
   previousWork: "Naši projekti",

@@ -1,26 +1,23 @@
 import * as React from "react";
-import "../../styles/navbar.css";
-import { styled } from "@mui/material/styles";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import { Button, Grid, IconButton, Toolbar, Typography } from "@mui/material";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router";
 import useLanguage from "../../hooks/utils/useLanguage";
 import prevod from "./prevod";
-
-//import useWindowDimensions from "../../hooks/useWindowDimensions";
-
+import { Button, Grid, IconButton, Toolbar, Typography } from "@mui/material";
 import LanguageSwitcher from "../LanguageSwitcher";
-const drawerWidth = 240;
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import "./navbar.css"
 
 enum textColor {
-  LIGHT = "#F2F2F2",
+  LIGHT = "#FEFEFE",
   DARK = "#262626",
 }
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
+
+const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -39,76 +36,84 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-export default function Navbar() {
-  const navigate = useNavigate();
+const TopMenu = () => {
   const lang = useLanguage(prevod);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const [currentUrl, setCurrentUrl] = React.useState("");
   const [currentColor, setCurrentColor] = React.useState(textColor.LIGHT);
+  const [isVisible, setIsVisible] = React.useState(false);
+  const newColorRef = React.useRef(textColor.LIGHT);
 
   React.useEffect(() => {
-    setCurrentUrl(window.location.href);
-
     // Podesavanje boje navbara
     window.addEventListener("scroll", (event) => {
       event.preventDefault();
 
       const navbarEl = document.querySelector(".Navbar") as HTMLElement;
       const pwSection = document.querySelector("#previousWork") as HTMLElement;
-      const navbarRect = navbarEl.getBoundingClientRect();
-      const pwSectionRect = pwSection.getBoundingClientRect();
+      const pwSection2 = document.querySelector("#textSection") as HTMLElement;
 
-      let newColor =
-        navbarRect.top < pwSectionRect.bottom &&
-        navbarRect.bottom > pwSectionRect.top
-          ? textColor.DARK
-          : textColor.LIGHT;
+      if (navbarEl) {
+        const navbarRect = navbarEl.getBoundingClientRect();
+        const pwSectionRect = pwSection.getBoundingClientRect();
+        const pwSectionRect2 = pwSection2.getBoundingClientRect();
 
-      if (newColor !== currentColor) setCurrentColor(newColor);
+        if (
+          (navbarRect.top < pwSectionRect.bottom &&
+            navbarRect.bottom > pwSectionRect.top) ||
+          (navbarRect.top < pwSectionRect2.bottom &&
+            navbarRect.bottom > pwSectionRect2.top)
+        ) {
+          newColorRef.current = textColor.DARK;
+        } else {
+          newColorRef.current = textColor.LIGHT;
+        }
+
+        if (newColorRef.current !== currentColor)
+          setCurrentColor(newColorRef.current);
+      }
     });
   }, [currentColor]);
 
   const handleClickAbout = () => {
     const element = document.getElementById("aboutUs");
-    if (currentUrl === "/home") {
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    } else {
-      navigate("/home");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" }); //Ne radi
-      }
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleClickServices = () => {
+    const element = document.getElementById("services");
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const handleClickPrevious = () => {
     const element = document.getElementById("previousWork");
-    if (currentUrl === "/home") {
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    } else {
-      navigate("/home");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleClickContact = () => {
+    const element = document.getElementById("contact");
+    if (element) {
+      const elementRect = element.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.pageYOffset;
+      const offset = 0.1;
+      window.scrollTo({
+        top: absoluteElementTop + offset,
+        behavior: "smooth",
+      });
     }
   };
 
   const handleClickHome = () => {
-    if (currentUrl === "/home") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    } else {
-      navigate("/home");
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -124,8 +129,8 @@ export default function Navbar() {
     >
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: isVisible ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
+        animate={{ opacity: isVisible ? 1 : 0.3 }}
+        transition={{ duration: 0.3 }}
       >
         <Toolbar>
           <Grid
@@ -135,7 +140,7 @@ export default function Navbar() {
             alignItems="center"
           >
             <Grid item>
-              <Grid container alignItems="center" spacing={9}>
+              <Grid container alignItems="center" spacing="56px">
                 <Grid item>
                   <IconButton
                     onClick={handleClickHome}
@@ -145,7 +150,7 @@ export default function Navbar() {
                     <img
                       src={"./3nity-logo-v2.png"}
                       alt="Logo"
-                      style={{ height: "160px", marginRight: "10px" }}
+                      className="navbar-logo"
                     />
                   </IconButton>
                 </Grid>
@@ -156,20 +161,22 @@ export default function Navbar() {
                     disableRipple
                   >
                     <Typography
-                      variant="subtitle1"
-                      sx={{ color: currentColor }}
-                      className="hover-underline-animation"
+                      color={currentColor}
+                      className="hover-underline-animation navbar-text"
                     >
                       {lang.about}
                     </Typography>
                   </IconButton>
                 </Grid>
                 <Grid item>
-                  <IconButton sx={{ borderRadius: 0 }} disableRipple>
+                  <IconButton
+                    sx={{ borderRadius: 0 }}
+                    onClick={handleClickServices}
+                    disableRipple
+                  >
                     <Typography
-                      variant="subtitle1"
-                      sx={{ color: currentColor }}
-                      className="hover-underline-animation"
+                      color={currentColor}
+                      className="hover-underline-animation navbar-text"
                     >
                       {lang.services}
                     </Typography>
@@ -182,9 +189,8 @@ export default function Navbar() {
                     disableRipple
                   >
                     <Typography
-                      variant="subtitle1"
-                      sx={{ color: currentColor }}
-                      className="hover-underline-animation"
+                      color={currentColor}
+                      className="hover-underline-animation navbar-text"
                     >
                       {lang.previousWork}
                     </Typography>
@@ -193,15 +199,12 @@ export default function Navbar() {
                 <Grid item>
                   <IconButton
                     sx={{ borderRadius: 0 }}
-                    onClick={() => {
-                      navigate("/contact");
-                    }}
+                    onClick={handleClickContact}
                     disableRipple
                   >
                     <Typography
-                      variant="subtitle1"
-                      sx={{ color: currentColor }}
-                      className="hover-underline-animation"
+                      color={currentColor}
+                      className="hover-underline-animation navbar-text"
                     >
                       {lang.contactUs}
                     </Typography>
@@ -236,4 +239,6 @@ export default function Navbar() {
       </motion.div>
     </AppBar>
   );
-}
+};
+
+export default TopMenu;

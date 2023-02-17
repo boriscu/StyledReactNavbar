@@ -42,3 +42,26 @@
 .fill:hover:before {
   top: 0;
 }
+
+/*### Big Screen CSS Here ### */
+.navbar-text {
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  font-size: 20px !important;
+  line-height: 35px !important;
+}
+
+.navbar-logo {
+  height: 150px !important;
+}
+
+.navbar-icon {
+  color: #41d2bf;
+  font-size: 40px !important;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-icon {
+    font-size: 30px !important;
+  }
+}
